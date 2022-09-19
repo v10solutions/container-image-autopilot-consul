@@ -1,0 +1,10 @@
+#
+# Container Image Autopilot Consul
+#
+
+.nova/
+.vscode/
+*.env
+**/.DS_Store
+
+.output/

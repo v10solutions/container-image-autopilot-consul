@@ -1,0 +1,56 @@
+{
+	"control": {
+		"socket": "/usr/local/var/run/containerpilot/containerpilot.sock"
+	},
+	"logging": {
+		"level": "warn",
+		"format": "json",
+		"output": "stderr"
+	},
+	"consul": {
+		"address": "{{ .HOSTNAME }}:8501",
+		"scheme": "https",
+		"tls": {
+			"verify": true,
+			"servername": "server.dc.consul",
+			"cafile": "/usr/local/etc/containerpilot/consul-ca.pem"
+		}
+	},
+	"jobs": [
+		{
+			"name": "consul",
+			"port": 8501,
+			"exec": [
+				"doas", "-u", "consul",
+				"consul", "agent", "-config-file", "/usr/local/etc/consul/config.hcl"
+			],
+			"logging": {
+				"raw": true
+			},
+			"restarts": "unlimited",
+			"health": {
+				"exec": [
+					"doas", "-u", "consul",
+					"consul-healthcheck", "8501", "8502"
+				],
+				"interval": 10,
+				"ttl": 15,
+				"timeout": "8s"
+			}
+		},
+		{
+			"name": "consul-prestop",
+			"exec": [
+				"doas", "-u", "consul",
+				"consul", "leave"
+			],
+			"logging": {
+				"raw": true
+			},
+			"when": {
+				"source": "consul",
+				"once": "stopping"
+			}
+		}
+	]
+}

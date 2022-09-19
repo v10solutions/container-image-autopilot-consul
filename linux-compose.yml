@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  consul:
+    image: ${IMG_REG_URL}/${IMG_REPO}:${IMG_TAG_PFX}-${PROJ_PLATFORM_OS}-${PROJ_PLATFORM_ARCH}
+    platform: ${PROJ_PLATFORM_OS}/${PROJ_PLATFORM_ARCH}
+    user: '0'
+    domainname: dc.consul
+    networks:
+      - default
+    ports:
+      - 8501
+      - 8502
+      - 8600
+      - 8600/udp
+    healthcheck:
+      interval: 10s
+      timeout: 8s
+      retries: 3
+      test: containerpilot-healthcheck "/usr/local/var/run/containerpilot/containerpilot.sock" "8"
+    entrypoint: containerpilot
+    command:
+      - -config
+      - "/usr/local/etc/containerpilot/config.json"
+
+networks:
+  default:
+    driver: bridge

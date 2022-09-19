@@ -1,0 +1,8 @@
+#
+# Container Image Autopilot Consul
+#
+
+etc/containerpilot/consul-ca.pem binary
+etc/consul/ca.pem binary
+etc/consul/tls-cer.pem binary
+etc/consul/tls-key.pem binary
